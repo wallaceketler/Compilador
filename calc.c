@@ -7,7 +7,7 @@ int main()
 	
 	z = x + y;
 
-	printf("%d",x);
+	printf("%d",z);
 	
 
 	return 0;

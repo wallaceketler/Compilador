@@ -61,7 +61,7 @@ for z in tokens:
         print(z +"      - comparação")
     elif ((re.findall(r'\d', z)) != []):
         print(z +"      - número")
-    elif (re.findall('"\".*\""',z)) != []:
+    elif (re.match('".*"',z)):
         print(z +"      - literal")
     elif z in atribui:
         print(z + "     - atribuição")
