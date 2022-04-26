@@ -26,13 +26,12 @@ for x in arq:
                 tokens.append("(")              #adiciono o '('
                 y[1] = y[1].strip()             #tiro o lixo do depois do '('
                 y[1] = y[1].split(";")          #divido o depois do '(' em antes do ';' e depois do ';'
-                w = y[1][0].strip()             #tiro o lixo do antes do ';'
+                w = y[1][0].split(")")          #tiro o lixo do antes do ';'
                 if aux == 1:                    #se tiver ',' em y
-                    w = w.split(",")            #divido antes do ',' em antes e depois do ','        
-                    tokens.append(w[0])         #adiciono o antes do ','
+                    z = w[0].split(",")         #divido antes do ',' em antes e depois do ','        
+                    tokens.append(z[0])         #adiciono o antes do ','
                     tokens.append(",")          #adiciono o ','
-                    z = w[1].split(")")         #divido o depois do ',' em antes e depois do ')'
-                    tokens.append(z[0])         #adiciono o antes do ')'
+                    tokens.append(z[1])         #adiciono o antes do ')'
                 else:                           #se não tiver ',' em y
                     tokens.append(w[0])         #adiciono o antes do ';'
                 tokens.append(")")
@@ -69,8 +68,3 @@ for z in tokens:
         print(z + "     - delimitador")
     else:
         print(z + "     - variável ou função")
-
-        # if("(" in y):
-              #  y = y.split("(")
-              # tokens.append(y[0])
-              #  tokens.append("(")
