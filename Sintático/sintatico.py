@@ -91,7 +91,7 @@ for i in range(0,len(tokens)):
                     print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2])
                     verifica_variavel = 1
                 #pode estar atribuindo valor na declaração
-                elif(tokens[i+2 == '=']):
+                elif(tokens[i+2] == '='):
                     ##pode estar com apenas um valor
                     if(re.match('.*',tokens[i+3]) or re.match('\d',tokens[i+3])):
                         ##pode estar com apenas um valor
