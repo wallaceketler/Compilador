@@ -119,7 +119,11 @@ for i in range(0,len(tokens)):
                                             verifica_variavel = 1
             if(verifica_variavel == 0):
                 print("ERRO SINTÁTICO - declaração de variável ou função")
-            
+
+        if(tokens[i] == '=' or tokens[i] == "("):
+            if(tokens[i-2] != 'int'):
+                print("ERRO SINTÁTICO - declaração de variável ou função")
+        
         #########################
         #começo com return
         if(tokens[i] == "return"):
@@ -140,6 +144,5 @@ if((conta_chave_abre+conta_chave_fecha)%2 == 0 and (conta_chave_abre == conta_us
 else:
     print("ERRO SINTÁTICO - Chaves mal colocadas")
 #########################
-
 
 
