@@ -164,6 +164,7 @@ listaVarFloat = []  #guarda floats
 listaVarChar = []   #guarda chars
 listaFunc = []      #guarda Funções para possível escalabilidade do código
                     #O que possibilitaria verificarmos escopos de diferentes funções
+
 for i in range (0, len(tokens)):
     if(tokens[i] == 'int'):
         #pode ser função
