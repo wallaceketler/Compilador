@@ -2,7 +2,7 @@
 
 import re
 
-arq = open("calc.c", "r")
+arq = open("Código 1.txt", "r")
 tokens = []
 operadores = ["+", "-", "*", "/"]
 reserva = ["const", "while", "While", "WHILE","if","IF","iF","If", "#include", "<stdio.h>",
@@ -62,9 +62,18 @@ tam = 0
 conta_chave_abre = 0
 conta_chave_fecha = 0
 conta_uso_chave = 0
+fim_linha = ''          #usado para determinar fim de linha quando atribuição tem virgula
+fim_virgula = ''        #usado para verificarmos se chegarmos em vírgula em atribuições
+item_atual_linha = 0;   #usado para determina item atual da linha de atribuição c/ virgula
+verifica_falha = 0;
+
+
 for i in range(0,len(tokens)):
 
         verifica_variavel = 0
+        verifica_falha = 0
+        item_atual_linha = 0
+        fim_linha = ''
         #inclusão de bibliotecas
         if(tokens[i] == "#include"):
             tam = len(tokens[i+1])
@@ -82,6 +91,7 @@ for i in range(0,len(tokens)):
                 print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2]+ " "  + tokens[i+3])
                 conta_uso_chave  = conta_uso_chave + 1
                 verifica_variavel = 1
+                continue
                 ##falta verificar se abriu e fechou chaves do main
             #pode ser variável
             elif(re.match('.*',tokens[i+1]) and tokens[i+1] != "main" and tokens[i+2] != '(') :
@@ -90,6 +100,7 @@ for i in range(0,len(tokens)):
                     print("Linha ok")
                     print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2])
                     verifica_variavel = 1
+                    continue
                 #pode estar atribuindo valor na declaração
                 elif(tokens[i+2] == '='):
                     ##pode estar com apenas um valor
@@ -99,6 +110,7 @@ for i in range(0,len(tokens)):
                             print("Linha ok")
                             print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2]+ " "  + tokens[i+3]+ " "  + tokens[i+4])
                             verifica_variavel = 1
+                            continue
                         ##pode ter operação simples
                         if(tokens[i+4] in operadores):
                             if(re.match('.*',tokens[i+5]) or re.match('\d',tokens[i+5])):
@@ -107,6 +119,7 @@ for i in range(0,len(tokens)):
                                     print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2]+ " "  + tokens[i+3]+ " "  + tokens[i+4]+ " " 
                                           +tokens[i+5]+ " "  + tokens[i+6])
                                     verifica_variavel = 1
+                                    continue
                         ##pode ter operação tripla
                         if(tokens[i+4] in operadores):
                             if(re.match('.*',tokens[i+5]) or re.match('\d',tokens[i+5])):
@@ -117,12 +130,51 @@ for i in range(0,len(tokens)):
                                             print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2]+ " "  + tokens[i+3]+ " "  + tokens[i+4]+ " " 
                                                 +tokens[i+5]+ " "  + tokens[i+6]+ " "  + tokens[i+7]+ " "  + tokens[i+8])
                                             verifica_variavel = 1
+                                            continue
+                        ##pode ter declarações com vírgula
+                        if(tokens[i+4] == ','):
+                            while(fim_linha != ';'):
+                                if((re.match('.*',tokens[i+1+item_atual_linha]) or re.match('\d',tokens[i+1+item_atual_linha])) and 
+                                (tokens[i+2+item_atual_linha] == '=') and 
+                                (re.match('.*',tokens[i+3+item_atual_linha]) or re.match('\d',tokens[i+3+item_atual_linha])) and
+                                (tokens[i+4+item_atual_linha] == ',' or tokens[i+4+item_atual_linha == ';'])):
+                                    fim_linha = tokens[i+item_atual_linha+4]
+                                    item_atual_linha = item_atual_linha+4
+                                else:
+                                    verifica_falha = 1;
+                                    break
+                            if(verifica_falha == 1):
+                                print("ERRO SINTÁTICO - declaração de variável ou função")
+                                continue
+                            else:
+                                verifica_variavel = 1
+                                print("Linha ok")
+                                for y in range(0,item_atual_linha+1):
+                                    print(tokens[i+y] +' ', end="")  
+                                print()
             if(verifica_variavel == 0):
-                print("ERRO SINTÁTICO - declaração de variável ou função")
-
-        if(tokens[i] == '=' or tokens[i] == "("):
-            if(tokens[i-2] != 'int'):
-                print("ERRO SINTÁTICO - declaração de variável ou função")
+                print("ERRO SINTÁTICO - Adeclaração de variável ou função")                                                            
+        #pode começar com variável qualquer
+        if(re.match('.*',tokens[i]) and tokens[i-1] == ';' and tokens[i]!='}' and tokens[i]!='return'):
+            #print("->" +tokens[i]+tokens[i+3])
+            while(fim_linha != ';'):
+                if((re.match('.*',tokens[i+2+item_atual_linha]) or re.match('\d',tokens[i+2+item_atual_linha])) and (tokens[i+3+item_atual_linha] in operadores or tokens[i+3+item_atual_linha] == ';')):
+                    fim_linha = tokens[i+item_atual_linha+3]
+                    item_atual_linha = item_atual_linha+2
+                else:
+                    verifica_falha = 1
+                    break
+            if(verifica_falha == 1):
+                print("ERRO SINTÁTICO - atribuição errada")
+                continue
+            else:
+                verifica_variavel = 1 #caso em que deu certo  
+                print("Linha OK")                  
+                for y in range(0,item_atual_linha+3):
+                    print(tokens[i+y] +' ', end="")
+                    if(tokens[i+y] == ';'):
+                        break
+                print()
         
         #########################
         #começo com return

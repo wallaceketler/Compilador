@@ -2,6 +2,7 @@
 
 import re
 
+
 arq = open("calc.c", "r")
 tokens = []
 operadores = ["+", "-", "*", "/"]
@@ -62,9 +63,18 @@ tam = 0
 conta_chave_abre = 0
 conta_chave_fecha = 0
 conta_uso_chave = 0
+fim_linha = ''          #usado para determinar fim de linha quando atribuição tem virgula
+fim_virgula = ''        #usado para verificarmos se chegarmos em vírgula em atribuições
+item_atual_linha = 0;   #usado para determina item atual da linha de atribuição c/ virgula
+verifica_falha = 0;
+
+
 for i in range(0,len(tokens)):
 
         verifica_variavel = 0
+        verifica_falha = 0
+        item_atual_linha = 0
+        fim_linha = ''
         #inclusão de bibliotecas
         if(tokens[i] == "#include"):
             tam = len(tokens[i+1])
@@ -82,6 +92,7 @@ for i in range(0,len(tokens)):
                 print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2]+ " "  + tokens[i+3])
                 conta_uso_chave  = conta_uso_chave + 1
                 verifica_variavel = 1
+                continue
                 ##falta verificar se abriu e fechou chaves do main
             #pode ser variável
             elif(re.match('.*',tokens[i+1]) and tokens[i+1] != "main" and tokens[i+2] != '(') :
@@ -90,6 +101,7 @@ for i in range(0,len(tokens)):
                     print("Linha ok")
                     print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2])
                     verifica_variavel = 1
+                    continue
                 #pode estar atribuindo valor na declaração
                 elif(tokens[i+2] == '='):
                     ##pode estar com apenas um valor
@@ -99,6 +111,7 @@ for i in range(0,len(tokens)):
                             print("Linha ok")
                             print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2]+ " "  + tokens[i+3]+ " "  + tokens[i+4])
                             verifica_variavel = 1
+                            continue
                         ##pode ter operação simples
                         if(tokens[i+4] in operadores):
                             if(re.match('.*',tokens[i+5]) or re.match('\d',tokens[i+5])):
@@ -107,6 +120,7 @@ for i in range(0,len(tokens)):
                                     print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2]+ " "  + tokens[i+3]+ " "  + tokens[i+4]+ " " 
                                           +tokens[i+5]+ " "  + tokens[i+6])
                                     verifica_variavel = 1
+                                    continue
                         ##pode ter operação tripla
                         if(tokens[i+4] in operadores):
                             if(re.match('.*',tokens[i+5]) or re.match('\d',tokens[i+5])):
@@ -117,12 +131,51 @@ for i in range(0,len(tokens)):
                                             print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2]+ " "  + tokens[i+3]+ " "  + tokens[i+4]+ " " 
                                                 +tokens[i+5]+ " "  + tokens[i+6]+ " "  + tokens[i+7]+ " "  + tokens[i+8])
                                             verifica_variavel = 1
+                                            continue
+                        ##pode ter declarações com vírgula
+                        if(tokens[i+4] == ','):
+                            while(fim_linha != ';'):
+                                if((re.match('.*',tokens[i+1+item_atual_linha]) or re.match('\d',tokens[i+1+item_atual_linha])) and 
+                                (tokens[i+2+item_atual_linha] == '=') and 
+                                (re.match('.*',tokens[i+3+item_atual_linha]) or re.match('\d',tokens[i+3+item_atual_linha])) and
+                                (tokens[i+4+item_atual_linha] == ',' or tokens[i+4+item_atual_linha == ';'])):
+                                    fim_linha = tokens[i+item_atual_linha+4]
+                                    item_atual_linha = item_atual_linha+4
+                                else:
+                                    verifica_falha = 1;
+                                    break
+                            if(verifica_falha == 1):
+                                print("ERRO SINTÁTICO - declaração de variável ou função")
+                                continue
+                            else:
+                                verifica_variavel = 1
+                                print("Linha ok")
+                                for y in range(0,item_atual_linha+1):
+                                    print(tokens[i+y] +' ', end="")  
+                                print()
             if(verifica_variavel == 0):
-                print("ERRO SINTÁTICO - declaração de variável ou função")
-
-        if(tokens[i] == '=' or tokens[i] == "("):
-            if(tokens[i-2] != 'int'):
-                print("ERRO SINTÁTICO - declaração de variável ou função")
+                print("ERRO SINTÁTICO - Adeclaração de variável ou função")                                                            
+        #pode começar com variável qualquer
+        if(re.match('.*',tokens[i]) and tokens[i-1] == ';' and tokens[i]!='}' and tokens[i]!='return'):
+            #print("->" +tokens[i]+tokens[i+3])
+            while(fim_linha != ';'):
+                if((re.match('.*',tokens[i+2+item_atual_linha]) or re.match('\d',tokens[i+2+item_atual_linha])) and (tokens[i+3+item_atual_linha] in operadores or tokens[i+3+item_atual_linha] == ';')):
+                    fim_linha = tokens[i+item_atual_linha+3]
+                    item_atual_linha = item_atual_linha+2
+                else:
+                    verifica_falha = 1
+                    break
+            if(verifica_falha == 1):
+                print("ERRO SINTÁTICO - atribuição errada")
+                continue
+            else:
+                verifica_variavel = 1 #caso em que deu certo  
+                print("Linha OK")                  
+                for y in range(0,item_atual_linha+3):
+                    print(tokens[i+y] +' ', end="")
+                    if(tokens[i+y] == ';'):
+                        break
+                print()
         
         #########################
         #começo com return
@@ -164,6 +217,9 @@ listaVarFloat = []  #guarda floats
 listaVarChar = []   #guarda chars
 listaFunc = []      #guarda Funções para possível escalabilidade do código
                     #O que possibilitaria verificarmos escopos de diferentes funções
+falha = 0
+pos_atual = 0
+fim_linha = ''
 
 for i in range (0, len(tokens)):
     if(tokens[i] == 'int'):
@@ -172,17 +228,28 @@ for i in range (0, len(tokens)):
             listaFunc.append(tokens[i+1])
         #pode ser variável
         else:
-            listaVarInt.append(tokens[i+1])
-            listaMain.append(tokens[i+1])
+            if(tokens[i+4] == ','):
+                while(fim_linha != ';'):
+                    listaVarInt.append(tokens[i+1+pos_atual])
+                    listaMain.append(tokens[i+1+pos_atual])
+                    fim_linha = tokens[i+pos_atual+4]
+                    pos_atual = pos_atual+4
+            else:
+                listaVarInt.append(tokens[i+1])
+                listaMain.append(tokens[i+1])
     #Em possível escalabilidade teremos um if para cada tipo, para colocarmos eles em listas diferentes
     elif(tokens[i] == 'float' or tokens[i] == 'char' or tokens[i] == 'void'):   
         if(tokens[i+2] == '('):
             listaFunc.append(tokens[i+1])
         else:
             listaMain.append(tokens[i+1])
+pos_atual = 0
+fim_linha = ''
+
 #Verificando Escopo e se os valores nas atribuições fazem sentido
 
 for i in range(0, len(tokens)):
+    #pode começar com int
     if(tokens[i] == 'int'):
         if(tokens[i+2] == '('): #função, buscar por return
             for j in range(0, len(tokens)):
@@ -200,6 +267,7 @@ for i in range(0, len(tokens)):
                         print("Variável fora do escopo ou não declarada")
                     print("Linha :" + tokens[i] + " " + tokens[i+1] + " " + tokens[i+2] + " " + tokens[i+3]
                     + " " + tokens[i+4])
+                    
             #pode ter atribuição com operação simples
             elif(tokens[i+6] == ';'):
                 if((not(re.match('\d',tokens[i+3])) and (tokens[i+3] not in listaVarInt)) or
@@ -209,6 +277,7 @@ for i in range(0, len(tokens)):
                         print("Variável fora do escopo ou não declarada")
                     print("Linha :" + " " + tokens[i] + " " + tokens[i+1] + " " + tokens[i+2] + " " + 
                     tokens[i+3] + " " + tokens[i+4] + " " + tokens[i+5] + " " + " " + tokens[i+6])
+                   
             #pode ter atribuição com operação dupla
             elif(tokens[i+8] == ';'):
                 if((not(re.match('\d',tokens[i+3])) and (tokens[i+3] not in listaVarInt)) or
@@ -221,5 +290,37 @@ for i in range(0, len(tokens)):
                     print("Linha :" + " " + tokens[i] + " " + tokens[i+1] + " " + tokens[i+2] + " " + 
                            tokens[i+3] + " " + tokens[i+4] + " " + tokens[i+5] + " " + tokens[i+6] + 
                            " " + tokens[i+7] + " " + tokens[i+8])
+        continue
+    #pode começar com variável qualquer
+    if(re.match('.*',tokens[i]) and tokens[i-1] == ';' and tokens[i]!='}' and tokens[i]!='return'):
+        #parte da lista de inteiros
+        while(fim_linha != ';'):
+            if(tokens[i+2+pos_atual] in listaVarInt or re.match('\d',tokens[i+2+pos_atual])):
+                fim_linha = tokens[i+pos_atual+3]
+                pos_atual = pos_atual+2
+            else:
+                falha = 1
+                break
+        if(falha == 1):
+            print("ERRO SEMÂNTICO - Atribuição errada")
+            continue
+        #parte do escopo da main
+        falha = 0
+        pos_atual = 0
+        fim_linha = ' '
+        while(fim_linha != ';'):
+            if(tokens[i+2+pos_atual] in listaMain or re.match('\d',tokens[i+2+pos_atual])):
+                fim_linha = tokens[i+pos_atual+3]
+                pos_atual = pos_atual+2
+            else:
+                falha = 1
+                break
+        if(falha == 1):
+            print("ERRO SEMÂNTICO - Variável fora do escopo")
+            continue
 
 
+print("Variáveis inteiras: ")
+print(listaVarInt)
+print("Variáveis na Main: ")
+print(listaMain)

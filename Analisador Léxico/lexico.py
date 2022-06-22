@@ -1,6 +1,6 @@
 import re
 
-arq = open("calc.c", "r")
+arq = open("Código 1.txt", "r")
 tokens = []
 operadores = ["+", "-", "*", "/"]
 reserva = ["const", "while", "While", "WHILE","if","IF","iF","If", "#include", "<stdio.h>",
