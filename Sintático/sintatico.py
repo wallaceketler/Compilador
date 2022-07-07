@@ -2,7 +2,7 @@
 
 import re
 
-arq = open("Código 1.txt", "r")
+arq = open("calc.c", "r")
 tokens = []
 operadores = ["+", "-", "*", "/"]
 reserva = ["const", "while", "While", "WHILE","if","IF","iF","If", "#include", "<stdio.h>",
@@ -153,7 +153,7 @@ for i in range(0,len(tokens)):
                                     print(tokens[i+y] +' ', end="")  
                                 print()
             if(verifica_variavel == 0):
-                print("ERRO SINTÁTICO - Adeclaração de variável ou função")                                                            
+                print("ERRO SINTÁTICO - declaração de variável ou função")                                                            
         #pode começar com variável qualquer
         if(re.match('.*',tokens[i]) and tokens[i-1] == ';' and tokens[i]!='}' and tokens[i]!='return'):
             #print("->" +tokens[i]+tokens[i+3])

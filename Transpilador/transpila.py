@@ -73,9 +73,6 @@ def sintatico(tokens):
     delimita = ["{", "}", "[", "]", "(", ")"]
 
 
-    print(" ")
-    print("Análise Sintática: ")
-    print(" ")
     tam = 0
     conta_chave_abre = 0
     conta_chave_fecha = 0
@@ -96,8 +93,7 @@ def sintatico(tokens):
             if(tokens[i] == "#include"):
                 tam = len(tokens[i+1])
                 if(tokens[i+1][0]) == '<' and (tokens[i+1][tam-1] == '>'):
-                    print("Linha ok")
-                    print(tokens[i] + " " + tokens[i+1])    
+                    pass 
                 else:    
                     print("ERRO SINTÁTICO - inclusão de bibliotecas")
             #########################
@@ -105,8 +101,7 @@ def sintatico(tokens):
             if(tokens[i] == "int"): 
                 #pode ser main
                 if(tokens[i+1] == "main" and tokens[i+2] == "(" and tokens[i+3] == ")" and tokens[i+4] == '{'):
-                    print("Linha ok")
-                    print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2]+ " "  + tokens[i+3])
+                    
                     conta_uso_chave  = conta_uso_chave + 1
                     verifica_variavel = 1
                     continue
@@ -115,8 +110,7 @@ def sintatico(tokens):
                 elif(re.match('.*',tokens[i+1]) and tokens[i+1] != "main" and tokens[i+2] != '(') :
                     #pode estar apenas com o valor e ponto e vírgula
                     if(tokens[i+2] == ';'):
-                        print("Linha ok")
-                        print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2])
+                        
                         verifica_variavel = 1
                         continue
                     #pode estar atribuindo valor na declaração
@@ -124,18 +118,13 @@ def sintatico(tokens):
                         ##pode estar com apenas um valor
                         if(re.match('.*',tokens[i+3]) or re.match('\d',tokens[i+3])):
                             ##pode estar com apenas um valor
-                            if(tokens[i+4] == ';'):
-                                print("Linha ok")
-                                print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2]+ " "  + tokens[i+3]+ " "  + tokens[i+4])
+                            if(tokens[i+4] == ';'): 
                                 verifica_variavel = 1
                                 continue
                             ##pode ter operação simples
                             if(tokens[i+4] in operadores):
                                 if(re.match('.*',tokens[i+5]) or re.match('\d',tokens[i+5])):
                                     if(tokens[i+6] == ';'):
-                                        print("Linha ok")
-                                        print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2]+ " "  + tokens[i+3]+ " "  + tokens[i+4]+ " " 
-                                            +tokens[i+5]+ " "  + tokens[i+6])
                                         verifica_variavel = 1
                                         continue
                             ##pode ter operação tripla
@@ -144,9 +133,6 @@ def sintatico(tokens):
                                     if(tokens[i+6] in operadores):
                                         if(re.match('.*',tokens[i+7]) or re.match('\d',tokens[i+7])):
                                             if(tokens[i+8] == ';'):
-                                                print("Linha ok")
-                                                print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2]+ " "  + tokens[i+3]+ " "  + tokens[i+4]+ " " 
-                                                    +tokens[i+5]+ " "  + tokens[i+6]+ " "  + tokens[i+7]+ " "  + tokens[i+8])
                                                 verifica_variavel = 1
                                                 continue
                             ##pode ter declarações com vírgula
@@ -166,10 +152,6 @@ def sintatico(tokens):
                                     continue
                                 else:
                                     verifica_variavel = 1
-                                    print("Linha ok")
-                                    for y in range(0,item_atual_linha+1):
-                                        print(tokens[i+y] +' ', end="")  
-                                    print()
                 if(verifica_variavel == 0):
                     print("ERRO SINTÁTICO - Adeclaração de variável ou função")                                                            
             #pode começar com variável qualquer
@@ -186,12 +168,7 @@ def sintatico(tokens):
                     print("ERRO SINTÁTICO - atribuição errada")
                     continue
                 else:
-                    verifica_variavel = 1 #caso em que deu certo  
-                    print("Linha OK")                  
-                    for y in range(0,item_atual_linha+3):
-                        print(tokens[i+y] +' ', end="")
-                        if(tokens[i+y] == ';'):
-                            break
+                    verifica_variavel = 1 #caso em que deu certo       
                     print()
             
             #########################
@@ -199,8 +176,7 @@ def sintatico(tokens):
             if(tokens[i] == "return"):
                 #pode ser valor
                 if(re.match('\d',tokens[i+1]) and tokens[i+2] == ';'):
-                    print("Linha ok")
-                    print(tokens[i]+ " "  + tokens[i+1]+ " "  + tokens[i+2])
+                    pass
                 else:
                     print("ERRO SINTÁTICO - retorno de função ausente ou mal declarado")
             #chaves
@@ -210,7 +186,7 @@ def sintatico(tokens):
                 conta_chave_fecha = conta_chave_fecha + 1
 
     if((conta_chave_abre+conta_chave_fecha)%2 == 0 and (conta_chave_abre == conta_uso_chave)):
-        print("chaves ok")
+        pass
     else:
         print("ERRO SINTÁTICO - Chaves mal colocadas")
     #########################
@@ -225,17 +201,13 @@ def sintatico(tokens):
 
 def semantico(tokens):
 
+    operadores = ["+", "-", "*", "/"]
     reserva = ["const", "while", "While", "WHILE","if","IF","iF","If", "#include", "<stdio.h>",
                 "return", "int", "float", ";", ","]
     compara = [">","<", "<=",">=","==","!="]
     literal = ["''"]
     atribui = ["="]
     delimita = ["{", "}", "[", "]", "(", ")"]
-
-    print(" ")
-    print("Análise Semântica: ")
-    print(" ")
-
 
     #Criando listas de variáveis
 
@@ -283,7 +255,7 @@ def semantico(tokens):
                 for j in range(0, len(tokens)):
                     if(tokens[j] == 'return'):
                         if(re.match('\d',tokens[j+1])):             #se retorno for valor numérico ok
-                            print("Retorno compatível com função")
+                            pass
                         else:
                             print("Retorno NÃO compatível com função")
             else: # variável
@@ -347,8 +319,87 @@ def semantico(tokens):
                 print("ERRO SEMÂNTICO - Variável fora do escopo")
                 continue
 
+#conversão C para Python
+def cpython(tokens):
+    #palavras reservadas
+    operadores = ["+", "-", "*", "/"]
+    reserva = ["const", "while", "While", "WHILE","if","IF","iF","If", "#include", "<stdio.h>",
+                "return", "int", "float", ";", ","]
+    compara = [">","<", "<=",">=","==","!="]
+    literal = ["''"]
+    atribui = ["="]
+    delimita = ["{", "}", "[", "]", "(", ")"]
+
+    print("C -> Python:")
+    print()
+    print("Em C:")
+
+    for i in range(0,len(tokens)):
+        if tokens[i] in operadores: 
+            print(tokens[i]+ " ", end="")
+        elif tokens[i] in reserva:
+            if(tokens[i] == ';' or tokens[i] == "<stdio.h>"): 
+                print(tokens[i]+ " ")
+            else:
+                print(tokens[i]+ " ", end="")
+        elif tokens[i] in compara:
+            print(tokens[i]+ " ", end="")
+        elif ((re.findall(r'\d', tokens[i])) != []):
+            print(tokens[i]+ " ", end="")
+        elif (re.match('".*"',tokens[i])):
+            print(tokens[i]+ " ", end="")
+        elif tokens[i] in atribui:
+            print(tokens[i]+ " ", end="")
+        elif tokens[i] in delimita:
+            if(tokens[i] == "{"):
+                print(tokens[i] + " ")
+            else:
+                print(tokens[i]+ " ", end="")
+        else:
+            print(tokens[i]+ " ", end="")
+    print()
+    print()
+    print("Em Python:")
+    for i in range(0,len(tokens)):
+        if tokens[i] in operadores: 
+            print(tokens[i]+ " ", end="")
+        elif tokens[i] in reserva:
+            if(tokens[i] == ';' or tokens[i] == "<stdio.h>" or tokens[i] == "#include" or tokens[i]=="int"
+               or tokens[i] == "return"): 
+                print(" ")
+            else:
+                print(tokens[i]+ " ", end="")
+        elif tokens[i] in compara:
+            print(tokens[i]+ " ", end="")
+        elif ((re.findall(r'\d', tokens[i])) != []):
+            if(tokens[i-1] == "return"):
+                print(" ")
+            else:
+                print(tokens[i]+ " ", end="")
+        elif (re.match('".*"',tokens[i])):
+            print(tokens[i]+ " ", end="")
+        elif tokens[i] in atribui:
+            print(tokens[i]+ " ", end="")
+        elif tokens[i] in delimita:
+            if(tokens[i-1] == "main" or tokens[i-2]):
+                print(" ")
+            else:
+                if(tokens[i] == "{" or tokens[i] == "}"):
+                    print(" ")
+                else:
+                    print(tokens[i]+ " ", end="")
+        else:
+            if(tokens[i]=="main"):
+                print(" ")
+            else:
+                print(tokens[i]+ " ", end="")
+
+
+    
+
 #Chamada de funções
 
 tokens = lexico()
 sintatico(tokens)
 semantico(tokens)
+cpython(tokens)
