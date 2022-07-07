@@ -1,0 +1,17 @@
+#include <stdio.h> //declaracao de biblioteca
+
+int main() //função main
+{
+    int arg1,arg2,arg3; //declaracao de inteiros
+    float arg4, arg5, arg6; //declaracao de floats
+    cin >> arg1; //recebe o argumento 1
+    cin >> arg2; //recebe o argumento 2
+    cin >> arg4; //recebe o argumento 3
+    cin >> arg5; //recebe o argumento 4
+    
+    arg6 = arg1 + arg2 * arg4; //realizacao uma operação
+    arg3 = arg2 - arg1 * arg6; //realiza outra operacao
+    float operacao = arg1 * arg2 / arg3 - arg4 / arg5 * arg6; //realiza a última operação
+
+    return 0.5; //finaliza a função main
+}
