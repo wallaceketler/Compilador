@@ -7,7 +7,7 @@ import re   #Biblioteca para uso de expressões regulares
 
 def lexico(): 
 
-    arq = open("código1.txt", "r")
+    arq = open("código10.txt", "r")
     tokens = []
     operadores = ["+", "-", "*", "/"]
     reserva = ["const", "while", "While", "WHILE","if","IF","iF","If", "#include", "<stdio.h>",
@@ -324,7 +324,7 @@ def cpython(tokens):
     #palavras reservadas
     operadores = ["+", "-", "*", "/"]
     reserva = ["const", "while", "While", "WHILE","if","IF","iF","If", "#include", "<stdio.h>",
-                "return", "int", "float", ";", ","]
+                "return", "int", "float", ";", ",", "cout", "cin", "<<", ">>"]
     compara = [">","<", "<=",">=","==","!="]
     literal = ["''"]
     atribui = ["="]
@@ -365,8 +365,15 @@ def cpython(tokens):
             print(tokens[i]+ " ", end="")
         elif tokens[i] in reserva:
             if(tokens[i] == ';' or tokens[i] == "<stdio.h>" or tokens[i] == "#include" or tokens[i]=="int"
-               or tokens[i] == "return"): 
+               or tokens[i] == "float" or tokens[i] == "return"): 
                 print(" ")
+            elif(tokens[i] == "cin" and tokens[i+1] == ">>"):
+               print(tokens[i+2] +"=input()")  
+            elif(tokens[i] == "cout" and tokens[i+1] == "<<"):
+                print("print(" + tokens[i+2] + ")")
+
+            elif(tokens[i] == ">>" or tokens[i] == "<<"):
+                pass
             else:
                 print(tokens[i]+ " ", end="")
         elif tokens[i] in compara:
@@ -374,8 +381,11 @@ def cpython(tokens):
         elif ((re.findall(r'\d', tokens[i])) != []):
             if(tokens[i-1] == "return"):
                 print(" ")
+            elif(tokens[i-1] == "<<" or tokens[i-1] == ">>" or tokens[i-1] == "int" or tokens[i-1] == "float" or tokens[i-1] == ","):
+                pass
             else:
                 print(tokens[i]+ " ", end="")
+
         elif (re.match('".*"',tokens[i])):
             print(tokens[i]+ " ", end="")
         elif tokens[i] in atribui:
@@ -391,8 +401,13 @@ def cpython(tokens):
         else:
             if(tokens[i]=="main"):
                 print(" ")
+            elif(tokens[i-1] == "<<"):
+                pass
             else:
                 print(tokens[i]+ " ", end="")
+                
+
+
 
 #Chamada de funções
 

@@ -1,11 +1,12 @@
-a = 5
+arg1=input()
 
-b = 5
+arg2=input()
 
-x = b - a
+arg4=input()
 
-y = x + 11
+arg5=input()
 
-soma = a + b
+arg6 = arg1 + arg2 * arg4
+arg3 = arg2 - arg1 * arg6
 
-a = b + x * y
+operacao = arg1 * arg2 / arg3 - arg4 / arg5 * arg6

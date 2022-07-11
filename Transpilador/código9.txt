@@ -1,4 +1,4 @@
-#include <stdio.h> //declaracao de biblioteca
+#include <stdio.h>
 
 float soma (float operando1, float operando2){
       return operando1+operando2;
@@ -16,7 +16,7 @@ void testar (float a){
       a = 10;
 }
 
-int main() //função main
+int main()
 {
     int soma = 5.25;
     int testar = 5;
