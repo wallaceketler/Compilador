@@ -7,11 +7,11 @@ import re   #Biblioteca para uso de expressões regulares
 
 def lexico(): 
 
-    arq = open("calc.c", "r")
+    arq = open("código1.txt", "r")
     tokens = []
     operadores = ["+", "-", "*", "/"]
     reserva = ["const", "while", "While", "WHILE","if","IF","iF","If", "#include", "<stdio.h>",
-                "return", "int", "float", ";", ","]
+                "return", "int", "float", ";", ",", "cout", "cin", "<<", ">>"]
     compara = [">","<", "<=",">=","==","!="]
     literal = ["''"]
     atribui = ["="]
@@ -66,7 +66,7 @@ def sintatico(tokens):
 
     operadores = ["+", "-", "*", "/"]
     reserva = ["const", "while", "While", "WHILE","if","IF","iF","If", "#include", "<stdio.h>",
-                "return", "int", "float", ";", ","]
+                "return", "int", "float", ";", ",", "cout", "cin", "<<", ">>"]
     compara = [">","<", "<=",">=","==","!="]
     literal = ["''"]
     atribui = ["="]
@@ -203,7 +203,7 @@ def semantico(tokens):
 
     operadores = ["+", "-", "*", "/"]
     reserva = ["const", "while", "While", "WHILE","if","IF","iF","If", "#include", "<stdio.h>",
-                "return", "int", "float", ";", ","]
+                "return", "int", "float", ";", ",", "cout", "cin", "<<", ">>"]
     compara = [">","<", "<=",">=","==","!="]
     literal = ["''"]
     atribui = ["="]
@@ -393,9 +393,6 @@ def cpython(tokens):
                 print(" ")
             else:
                 print(tokens[i]+ " ", end="")
-
-
-    
 
 #Chamada de funções
 
